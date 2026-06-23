@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FIFA World Cup 2026 — Predictor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg:        #F1F5F9;
+  --surface:   #FFFFFF;
+  --border:    #E2E8F0;
+  --border-md: #CBD5E1;
+  --text:      #0F172A;
+  --text-2:    #334155;
+  --text-3:    #64748B;
+  --text-4:    #94A3B8;
+  --accent:    #2563EB;
+  --accent-h:  #1D4ED8;
+  --accent-bg: #EFF6FF;
+  --amber:     #B45309;
+  --amber-bg:  #FFFBEB;
+  --amber-bd:  #FDE68A;
+  --green:     #047857;
+  --green-bg:  #ECFDF5;
+  --green-bd:  #A7F3D0;
+  --red:       #B91C1C;
+  --red-bg:    #FEF2F2;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.05);
+  --shadow:    0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.04);
+  --shadow-md: 0 4px 6px rgba(0,0,0,.05), 0 2px 4px rgba(0,0,0,.04);
+  --shadow-lg: 0 10px 15px rgba(0,0,0,.06), 0 4px 6px rgba(0,0,0,.05);
+  --radius-sm: 6px;
+  --radius:    10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.5;
+}
+
+/* ── HERO ─────────────────────────────────── */
+.hero {
+  background: linear-gradient(160deg, #0F172A 0%, #1E3A5F 60%, #0F172A 100%);
+  padding: 56px 24px 48px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(37,99,235,.25) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.12);
+  color: #93C5FD; font-size: 12px; font-weight: 600;
+  padding: 5px 14px; border-radius: 100px; letter-spacing: .5px;
+  text-transform: uppercase; margin-bottom: 20px;
+}
+.hero h1 {
+  font-size: clamp(32px, 5vw, 60px);
+  font-weight: 900; color: #FFFFFF;
+  letter-spacing: -1.5px; line-height: 1.1;
+  margin-bottom: 12px;
+}
+.hero h1 span { color: #60A5FA; }
+.hero-sub {
+  color: #94A3B8; font-size: 15px; font-weight: 400; max-width: 480px; margin: 0 auto 28px;
+}
+.host-row {
+  display: flex; justify-content: center; align-items: center;
+  gap: 8px; flex-wrap: wrap;
+}
+.host-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1);
+  color: #CBD5E1; font-size: 13px; font-weight: 500;
+  padding: 6px 14px; border-radius: 100px;
+}
+.host-divider { width: 3px; height: 3px; border-radius: 50%; background: #334155; }
+
+/* ── NAV ──────────────────────────────────── */
+.nav-wrap {
+  position: sticky; top: 0; z-index: 200;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+}
+.nav-inner {
+  max-width: 1200px; margin: 0 auto;
+  display: flex; align-items: center; gap: 4px;
+  padding: 0 24px; overflow-x: auto; scrollbar-width: none;
+}
+.nav-inner::-webkit-scrollbar { display: none; }
+.nav-btn {
+  flex-shrink: 0;
+  background: none; border: none; cursor: pointer;
+  color: var(--text-3); font-size: 13px; font-weight: 600;
+  font-family: inherit; padding: 14px 16px;
+  border-bottom: 2px solid transparent;
+  transition: color .15s, border-color .15s;
+  white-space: nowrap;
+}
+.nav-btn:hover { color: var(--text); }
+.nav-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* ── LAYOUT ───────────────────────────────── */
+.page { display: none; max-width: 1200px; margin: 0 auto; padding: 32px 24px 64px; }
+.page.active { display: block; }
+
+.page-header { margin-bottom: 28px; }
+.page-title { font-size: 22px; font-weight: 800; color: var(--text); letter-spacing: -.4px; }
+.page-desc { font-size: 14px; color: var(--text-3); margin-top: 4px; }
+
+/* ── CARDS ────────────────────────────────── */
+.card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-md); box-shadow: var(--shadow);
+}
+.card-p { padding: 24px; }
+.card-p-sm { padding: 16px 20px; }
+
+/* ── PREDICT PAGE ─────────────────────────── */
+.sim-meta {
+  display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px;
+}
+.meta-chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: var(--accent-bg); border: 1px solid #BFDBFE;
+  color: var(--accent); font-size: 12px; font-weight: 600;
+  padding: 5px 12px; border-radius: 100px;
+}
+
+.run-btn {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; max-width: 340px; margin: 0 auto 32px;
+  background: var(--accent); color: #fff; border: none;
+  padding: 15px 32px; border-radius: var(--radius-md);
+  font-size: 15px; font-weight: 700; font-family: inherit;
+  cursor: pointer; letter-spacing: .2px;
+  box-shadow: 0 4px 14px rgba(37,99,235,.35);
+  transition: background .15s, transform .15s, box-shadow .15s;
+}
+.run-btn:hover { background: var(--accent-h); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(37,99,235,.4); }
+.run-btn:active { transform: translateY(0); }
+.run-btn:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+.run-btn svg { flex-shrink: 0; }
+
+/* Champion reveal */
+.champion-card {
+  display: none; margin-bottom: 24px;
+  border-radius: var(--radius-lg); overflow: hidden;
+}
+.champion-card.show { display: block; animation: fadeUp .5s ease; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+
+.champion-inner {
+  background: linear-gradient(135deg, #0F172A 0%, #1E3A5F 100%);
+  padding: 36px 32px; text-align: center;
+}
+.champion-eyebrow {
+  display: inline-block;
+  background: rgba(251,191,36,.12); border: 1px solid rgba(251,191,36,.3);
+  color: #FCD34D; font-size: 11px; font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase; padding: 5px 14px; border-radius: 100px; margin-bottom: 16px;
+}
+.champion-flag { font-size: 72px; line-height: 1; margin-bottom: 12px; }
+.champion-name { font-size: 40px; font-weight: 900; color: #fff; letter-spacing: -1px; margin-bottom: 8px; }
+.champion-prob {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(16,185,129,.15); border: 1px solid rgba(16,185,129,.3);
+  color: #6EE7B7; font-size: 14px; font-weight: 600;
+  padding: 6px 16px; border-radius: 100px; margin-bottom: 20px;
+}
+.champion-players { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
+.champ-player {
+  background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.1);
+  color: #CBD5E1; font-size: 12px; font-weight: 500;
+  padding: 5px 12px; border-radius: 100px;
+  display: flex; align-items: center; gap: 6px;
+}
+.champ-pos {
+  font-size: 10px; font-weight: 700; color: #FCD34D;
+}
+
+/* Final matchup */
+.final-row {
+  display: none; grid-template-columns: 1fr auto 1fr; gap: 16px;
+  align-items: center; margin-bottom: 32px;
+}
+.final-row.show { display: grid; animation: fadeUp .5s ease .1s both; }
+.final-box {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-md); padding: 20px; text-align: center;
+  box-shadow: var(--shadow);
+}
+.final-box.winner {
+  border-color: #FCD34D; background: #FFFBEB;
+  box-shadow: 0 0 0 3px rgba(252,211,77,.15), var(--shadow);
+}
+.final-flag { font-size: 40px; margin-bottom: 6px; }
+.final-name { font-size: 16px; font-weight: 800; color: var(--text); }
+.final-label { font-size: 11px; color: var(--text-4); margin-top: 3px; font-weight: 500; }
+.vs-badge {
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+}
+.vs-text { font-size: 11px; font-weight: 700; color: var(--text-4); letter-spacing: 1px; text-transform: uppercase; }
+.vs-line { width: 1px; height: 20px; background: var(--border); }
+
+/* Rankings */
+.rankings-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 12px;
+}
+.rankings-title { font-size: 16px; font-weight: 700; color: var(--text); }
+.rankings-sub { font-size: 12px; color: var(--text-4); }
+
+.rank-list { display: flex; flex-direction: column; gap: 2px; }
+.rank-row {
+  display: grid; grid-template-columns: 44px 1fr 72px 80px;
+  align-items: center; gap: 12px;
+  padding: 12px 16px; border-radius: var(--radius);
+  transition: background .12s;
+  cursor: default;
+}
+.rank-row:hover { background: var(--bg); }
+.rank-num {
+  font-size: 13px; font-weight: 700; color: var(--text-4);
+  text-align: center;
+}
+.rank-num.top { color: var(--amber); }
+.rank-left { display: flex; align-items: center; gap: 12px; }
+.rank-flag { font-size: 22px; flex-shrink: 0; }
+.rank-name { font-size: 14px; font-weight: 700; color: var(--text); }
+.rank-bar-track {
+  height: 5px; background: var(--border); border-radius: 100px; overflow: hidden; margin-top: 4px;
+}
+.rank-bar-fill {
+  height: 100%; border-radius: 100px;
+  background: linear-gradient(90deg, var(--accent), #60A5FA);
+  transition: width 1.2s cubic-bezier(.4,0,.2,1);
+}
+.rank-bar-fill.top1 { background: linear-gradient(90deg, #D97706, #FBBF24); }
+.rank-bar-fill.top2 { background: linear-gradient(90deg, #475569, #94A3B8); }
+.rank-bar-fill.top3 { background: linear-gradient(90deg, #92400E, #D97706); }
+.rank-pct { font-size: 15px; font-weight: 800; color: var(--text); text-align: right; }
+.rank-odds { font-size: 11px; color: var(--text-4); text-align: right; font-weight: 500; }
+
+/* ── TEAMS PAGE ───────────────────────────── */
+.teams-filter {
+  display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px;
+}
+.filter-btn {
+  background: var(--surface); border: 1px solid var(--border);
+  color: var(--text-3); font-size: 12px; font-weight: 600; font-family: inherit;
+  padding: 7px 16px; border-radius: 100px; cursor: pointer;
+  transition: all .15s;
+}
+.filter-btn:hover { border-color: var(--accent); color: var(--accent); }
+.filter-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+.teams-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+.team-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-md); overflow: hidden;
+  box-shadow: var(--shadow); transition: box-shadow .2s, transform .2s, border-color .2s;
+}
+.team-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-3px); border-color: var(--border-md); }
+
+.tc-head {
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: flex-start; gap: 14px;
+}
+.tc-flag { font-size: 44px; line-height: 1; flex-shrink: 0; }
+.tc-meta { flex: 1; min-width: 0; }
+.tc-name { font-size: 18px; font-weight: 800; color: var(--text); letter-spacing: -.3px; }
+.tc-conf { font-size: 11px; color: var(--text-4); font-weight: 600; text-transform: uppercase; letter-spacing: .8px; margin-top: 2px; }
+.tc-tier {
+  display: inline-block; margin-top: 8px;
+  font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .8px;
+  padding: 3px 10px; border-radius: 100px;
+}
+.tier-1 { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-bd); }
+.tier-2 { background: var(--accent-bg); color: var(--accent); border: 1px solid #BFDBFE; }
+.tier-3 { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-bd); }
+
+.tc-strength { padding: 14px 20px; border-bottom: 1px solid var(--border); }
+.tc-str-label { display: flex; justify-content: space-between; font-size: 11px; font-weight: 600; color: var(--text-3); margin-bottom: 7px; }
+.tc-str-val { color: var(--text); font-weight: 800; }
+.tc-str-track { height: 6px; background: var(--border); border-radius: 100px; overflow: hidden; }
+.tc-str-fill { height: 100%; border-radius: 100px; transition: width .8s ease; }
+
+.tc-players { padding: 14px 20px; }
+.tc-pl-head { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-4); margin-bottom: 10px; }
+.pl-row { display: flex; justify-content: space-between; align-items: center; padding: 7px 0; }
+.pl-row + .pl-row { border-top: 1px solid var(--border); }
+.pl-left { display: flex; align-items: center; gap: 8px; }
+.pos-badge {
+  font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .3px;
+  padding: 2px 7px; border-radius: 4px; flex-shrink: 0;
+}
+.pos-GK  { background: #F3E8FF; color: #7C3AED; border: 1px solid #DDD6FE; }
+.pos-DEF { background: var(--accent-bg); color: var(--accent); border: 1px solid #BFDBFE; }
+.pos-MID { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-bd); }
+.pos-FWD { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-bd); }
+.pl-name { font-size: 13px; font-weight: 600; color: var(--text-2); }
+.pl-rating {
+  font-size: 12px; font-weight: 800; color: var(--surface);
+  background: var(--text-2);
+  width: 30px; height: 30px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.pl-rating.elite { background: var(--accent); }
+.pl-rating.world { background: linear-gradient(135deg, #D97706, #FBBF24); color: #fff; }
+
+/* ── GROUPS PAGE ──────────────────────────── */
+.groups-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+.group-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow);
+}
+.group-head {
+  padding: 14px 18px; background: var(--text);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.group-letter { font-size: 18px; font-weight: 900; color: #fff; }
+.group-count { font-size: 11px; color: #94A3B8; font-weight: 500; }
+.group-teams { padding: 4px 0; }
+.group-team {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 18px; font-size: 13px; font-weight: 600; color: var(--text-2);
+}
+.group-team + .group-team { border-top: 1px solid var(--border); }
+.g-num { font-size: 11px; color: var(--text-4); font-weight: 500; min-width: 14px; }
+.g-flag { font-size: 18px; }
+
+/* ── BRACKET PAGE ─────────────────────────── */
+.bracket-scroll { overflow-x: auto; padding-bottom: 16px; }
+.bracket-wrap { display: flex; gap: 0; min-width: 880px; align-items: stretch; }
+.b-round { display: flex; flex-direction: column; flex: 1; }
+.b-round-title {
+  text-align: center; font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 1.5px; color: var(--text-4); padding: 12px 8px;
+  border-bottom: 1px solid var(--border); margin-bottom: 8px;
+}
+.b-matches { display: flex; flex-direction: column; justify-content: space-around; flex: 1; gap: 6px; padding: 0 5px; }
+.b-match {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-sm);
+}
+.b-team {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 12px; font-size: 12px; font-weight: 600; color: var(--text-2);
+  transition: background .15s;
+}
+.b-team + .b-team { border-top: 1px solid var(--border); }
+.b-team.win { background: var(--accent-bg); color: var(--accent); font-weight: 700; }
+.b-team.lose { opacity: .4; }
+.b-flag { font-size: 14px; }
+.b-arrow {
+  width: 24px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--border-md); font-size: 16px;
+}
+
+/* ── STATS PAGE ───────────────────────────── */
+.stats-kpi { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; margin-bottom: 32px; }
+.kpi {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-md); padding: 20px; box-shadow: var(--shadow);
+}
+.kpi-label { font-size: 12px; font-weight: 600; color: var(--text-4); text-transform: uppercase; letter-spacing: .8px; margin-bottom: 8px; }
+.kpi-value { font-size: 28px; font-weight: 900; color: var(--text); letter-spacing: -.5px; line-height: 1; }
+.kpi-sub { font-size: 12px; color: var(--text-4); margin-top: 5px; }
+.kpi-accent { color: var(--accent); }
+.kpi-amber { color: var(--amber); }
+
+/* ── LOADING ──────────────────────────────── */
+.loader {
+  position: fixed; inset: 0; z-index: 500;
+  background: rgba(255,255,255,.92); backdrop-filter: blur(8px);
+  display: none; flex-direction: column; align-items: center; justify-content: center; gap: 16px;
+}
+.loader.show { display: flex; }
+.loader-ring {
+  width: 48px; height: 48px;
+  border: 3px solid var(--border); border-top-color: var(--accent);
+  border-radius: 50%; animation: spin .7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loader-title { font-size: 16px; font-weight: 700; color: var(--text); }
+.loader-status { font-size: 13px; color: var(--text-3); }
+.loader-track { width: 260px; height: 4px; background: var(--border); border-radius: 100px; overflow: hidden; }
+.loader-fill { height: 100%; background: var(--accent); border-radius: 100px; transition: width .1s; }
+
+/* ── FOOTER ───────────────────────────────── */
+footer {
+  background: var(--surface); border-top: 1px solid var(--border);
+  text-align: center; padding: 24px;
+  font-size: 12px; color: var(--text-4);
+}
+
+/* ── EMPTY STATE ──────────────────────────── */
+.empty-state {
+  text-align: center; padding: 64px 24px; color: var(--text-4);
+}
+.empty-icon { font-size: 40px; margin-bottom: 12px; opacity: .5; }
+.empty-title { font-size: 15px; font-weight: 700; color: var(--text-3); margin-bottom: 6px; }
+.empty-desc { font-size: 13px; }
+
+/* ── DIVIDER ──────────────────────────────── */
+.divider { height: 1px; background: var(--border); margin: 28px 0; }
+
+/* ── RESPONSIVE ───────────────────────────── */
+@media (max-width: 640px) {
+  .hero { padding: 40px 16px 36px; }
+  .page { padding: 20px 16px 48px; }
+  .final-row { grid-template-columns: 1fr; }
+  .vs-badge { flex-direction: row; align-items: center; gap: 8px; }
+  .vs-line { width: 20px; height: 1px; }
+  .rank-row { grid-template-columns: 36px 1fr 60px; }
+  .rank-odds { display: none; }
+  .teams-grid { grid-template-columns: 1fr; }
+}
+
+/* ── UTILITY ──────────────────────────────── */
+.sr-only { position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0); }
+.mt-2 { margin-top: 8px; }
+.mt-4 { margin-top: 16px; }
+.mt-6 { margin-top: 24px; }
+</style>
+</head>
+<body>
+
+<!-- LOADING OVERLAY -->
+<div class="loader" id="loader">
+  <div class="loader-ring"></div>
+  <div class="loader-title">Simulating Tournament</div>
+  <div class="loader-status" id="loaderStatus">Preparing simulation…</div>
+  <div class="loader-track"><div class="loader-fill" id="loaderFill" style="width:0"></div></div>
+</div>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-eyebrow">⚽ AI Predictor · June–July 2026</div>
+  <h1>FIFA World Cup <span>2026</span></h1>
+  <p class="hero-sub">Monte Carlo simulation powered by current squad ratings and ELO scoring</p>
+  <div class="host-row">
+    <span class="host-pill">🇺🇸 United States</span>
+    <span class="host-divider"></span>
+    <span class="host-pill">🇲🇽 Mexico</span>
+    <span class="host-divider"></span>
+    <span class="host-pill">🇨🇦 Canada</span>
+    <span class="host-divider"></span>
+    <span class="host-pill">48 Teams · 104 Matches</span>
+  </div>
+</header>
+
+<!-- NAV -->
+<nav class="nav-wrap">
+  <div class="nav-inner">
+    <button class="nav-btn active" onclick="showPage('predict', this)">Predict</button>
+    <button class="nav-btn" onclick="showPage('teams', this)">Teams</button>
+    <button class="nav-btn" onclick="showPage('groups', this)">Groups</button>
+    <button class="nav-btn" onclick="showPage('bracket', this)">Bracket</button>
+    <button class="nav-btn" onclick="showPage('stats', this)">Stats</button>
+  </div>
+</nav>
+
+<!-- PREDICT -->
+<main class="page active" id="page-predict">
+  <div class="page-header">
+    <div class="page-title">Tournament Prediction</div>
+    <div class="page-desc">Run 10,000 simulated tournaments to calculate win probabilities for each team.</div>
+  </div>
+
+  <div class="sim-meta">
+    <span class="meta-chip">10,000 simulations</span>
+    <span class="meta-chip">ELO-based ratings</span>
+    <span class="meta-chip">Monte Carlo model</span>
+    <span class="meta-chip">2025/26 squads</span>
+  </div>
+
+  <button class="run-btn" id="runBtn" onclick="runSimulation()">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M5 3l8 5-8 5V3z" fill="currentColor"/></svg>
+    Run Prediction
+  </button>
+
+  <!-- Champion -->
+  <div class="champion-card" id="champCard">
+    <div class="champion-inner">
+      <div class="champion-eyebrow">Predicted Champion</div>
+      <div class="champion-flag" id="champFlag"></div>
+      <div class="champion-name" id="champName"></div>
+      <div class="champion-prob" id="champProb"></div>
+      <div class="champion-players" id="champPlayers"></div>
+    </div>
+  </div>
+
+  <!-- Final -->
+  <div class="final-row" id="finalRow">
+    <div class="final-box" id="finalRunner">
+      <div class="final-flag" id="runnerFlag"></div>
+      <div class="final-name" id="runnerName"></div>
+      <div class="final-label">Runner-up</div>
+    </div>
+    <div class="vs-badge">
+      <div class="vs-line"></div>
+      <div class="vs-text">Final</div>
+      <div class="vs-line"></div>
+    </div>
+    <div class="final-box winner" id="finalWinner">
+      <div class="final-flag" id="winnerFlag2"></div>
+      <div class="final-name" id="winnerName2"></div>
+      <div class="final-label">Champion 🏆</div>
+    </div>
+  </div>
+
+  <!-- Rankings -->
+  <div class="card card-p">
+    <div class="rankings-header">
+      <div class="rankings-title">Win Probability Rankings</div>
+      <div class="rankings-sub" id="simNote">Run the prediction to see rankings</div>
+    </div>
+    <div class="rank-list" id="rankList">
+      <div class="empty-state">
+        <div class="empty-icon">📊</div>
+        <div class="empty-title">No results yet</div>
+        <div class="empty-desc">Click "Run Prediction" to simulate 10,000 tournaments</div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- TEAMS -->
+<main class="page" id="page-teams">
+  <div class="page-header">
+    <div class="page-title">Top Contenders</div>
+    <div class="page-desc">Current squad ratings and key players for the 20 strongest nations.</div>
+  </div>
+  <div class="teams-filter">
+    <button class="filter-btn active" onclick="filterTeams('all', this)">All</button>
+    <button class="filter-btn" onclick="filterTeams('UEFA', this)">UEFA</button>
+    <button class="filter-btn" onclick="filterTeams('CONMEBOL', this)">CONMEBOL</button>
+    <button class="filter-btn" onclick="filterTeams('CAF', this)">CAF / AFC</button>
+    <button class="filter-btn" onclick="filterTeams('CONCACAF', this)">CONCACAF</button>
+  </div>
+  <div class="teams-grid" id="teamsGrid"></div>
+</main>
+
+<!-- GROUPS -->
+<main class="page" id="page-groups">
+  <div class="page-header">
+    <div class="page-title">Group Stage</div>
+    <div class="page-desc">All 12 groups (A–L) of the expanded 48-team format.</div>
+  </div>
+  <div class="groups-grid" id="groupsGrid"></div>
+</main>
+
+<!-- BRACKET -->
+<main class="page" id="page-bracket">
+  <div class="page-header">
+    <div class="page-title">Simulated Bracket</div>
+    <div class="page-desc">The last predicted knockout path. Run the prediction to populate this view.</div>
+  </div>
+  <div class="card card-p">
+    <div id="bracketWrap">
+      <div class="empty-state">
+        <div class="empty-icon">🏟️</div>
+        <div class="empty-title">No bracket yet</div>
+        <div class="empty-desc">Run the prediction to generate a simulated bracket</div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- STATS -->
+<main class="page" id="page-stats">
+  <div class="page-header">
+    <div class="page-title">Tournament Stats</div>
+    <div class="page-desc">Key facts and figures about FIFA World Cup 2026.</div>
+  </div>
+  <div class="stats-kpi" id="statsKpi">
+    <div class="kpi"><div class="kpi-label">Participating Teams</div><div class="kpi-value kpi-accent">48</div><div class="kpi-sub">Largest World Cup ever</div></div>
+    <div class="kpi"><div class="kpi-label">Total Matches</div><div class="kpi-value">104</div><div class="kpi-sub">Across 3 host nations</div></div>
+    <div class="kpi"><div class="kpi-label">Host Cities</div><div class="kpi-value">16</div><div class="kpi-sub">USA · Mexico · Canada</div></div>
+    <div class="kpi"><div class="kpi-label">Tournament Duration</div><div class="kpi-value">39</div><div class="kpi-sub">Days · Jun 11 – Jul 19</div></div>
+    <div class="kpi"><div class="kpi-label">Groups</div><div class="kpi-value">12</div><div class="kpi-sub">Groups A through L</div></div>
+    <div class="kpi"><div class="kpi-label">Teams per Group</div><div class="kpi-value">4</div><div class="kpi-sub">Top 3 advance</div></div>
+  </div>
+
+  <div class="card card-p">
+    <div class="rankings-title" style="margin-bottom:16px;">Top Rated Players</div>
+    <div id="topPlayersList"></div>
+  </div>
+</main>
+
+<footer>
+  FIFA World Cup 2026 Predictor · Monte Carlo simulation · Squad data based on 2025/26 season performance ·
+  <span style="color:#CBD5E1">Predictions are probabilistic estimates, not guaranteed outcomes</span>
+</footer>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────────────
+const TEAMS = [
+  { name:"France", flag:"🇫🇷", conf:"UEFA", tier:1, strength:93,
+    players:[
+      {name:"Mike Maignan",pos:"GK",rating:88},
+      {name:"Theo Hernandez",pos:"DEF",rating:87},
+      {name:"Dayot Upamecano",pos:"DEF",rating:86},
+      {name:"N'Golo Kanté",pos:"MID",rating:88},
+      {name:"Aurélien Tchouaméni",pos:"MID",rating:87},
+      {name:"Antoine Griezmann",pos:"MID",rating:89},
+      {name:"Kylian Mbappé",pos:"FWD",rating:96},
+      {name:"Marcus Thuram",pos:"FWD",rating:86},
+    ]},
+  { name:"Spain", flag:"🇪🇸", conf:"UEFA", tier:1, strength:91,
+    players:[
+      {name:"Unai Simón",pos:"GK",rating:86},
+      {name:"Dani Carvajal",pos:"DEF",rating:87},
+      {name:"Aymeric Laporte",pos:"DEF",rating:85},
+      {name:"Rodri",pos:"MID",rating:92},
+      {name:"Pedri",pos:"MID",rating:90},
+      {name:"Fabián Ruiz",pos:"MID",rating:87},
+      {name:"Lamine Yamal",pos:"FWD",rating:91},
+      {name:"Álvaro Morata",pos:"FWD",rating:84},
+    ]},
+  { name:"Brazil", flag:"🇧🇷", conf:"CONMEBOL", tier:1, strength:90,
+    players:[
+      {name:"Alisson Becker",pos:"GK",rating:90},
+      {name:"Danilo",pos:"DEF",rating:83},
+      {name:"Marquinhos",pos:"DEF",rating:87},
+      {name:"Casemiro",pos:"MID",rating:87},
+      {name:"Bruno Guimarães",pos:"MID",rating:87},
+      {name:"Raphinha",pos:"FWD",rating:88},
+      {name:"Vinícius Jr.",pos:"FWD",rating:93},
+      {name:"Endrick",pos:"FWD",rating:84},
+    ]},
+  { name:"England", flag:"🏴󠁧󠁢󠁥󠁮󠁧󠁿", conf:"UEFA", tier:1, strength:89,
+    players:[
+      {name:"Jordan Pickford",pos:"GK",rating:85},
+      {name:"Kyle Walker",pos:"DEF",rating:85},
+      {name:"John Stones",pos:"DEF",rating:86},
+      {name:"Declan Rice",pos:"MID",rating:88},
+      {name:"Phil Foden",pos:"MID",rating:90},
+      {name:"Jude Bellingham",pos:"MID",rating:92},
+      {name:"Harry Kane",pos:"FWD",rating:91},
+      {name:"Bukayo Saka",pos:"FWD",rating:89},
+    ]},
+  { name:"Germany", flag:"🇩🇪", conf:"UEFA", tier:1, strength:87,
+    players:[
+      {name:"Manuel Neuer",pos:"GK",rating:87},
+      {name:"Joshua Kimmich",pos:"DEF",rating:88},
+      {name:"Antonio Rüdiger",pos:"DEF",rating:87},
+      {name:"Toni Kroos",pos:"MID",rating:88},
+      {name:"Florian Wirtz",pos:"MID",rating:90},
+      {name:"Jamal Musiala",pos:"MID",rating:91},
+      {name:"Kai Havertz",pos:"FWD",rating:86},
+      {name:"Leroy Sané",pos:"FWD",rating:86},
+    ]},
+  { name:"Argentina", flag:"🇦🇷", conf:"CONMEBOL", tier:1, strength:88,
+    players:[
+      {name:"Emiliano Martínez",pos:"GK",rating:89},
+      {name:"Nahuel Molina",pos:"DEF",rating:83},
+      {name:"Cristian Romero",pos:"DEF",rating:87},
+      {name:"Rodrigo De Paul",pos:"MID",rating:86},
+      {name:"Enzo Fernández",pos:"MID",rating:87},
+      {name:"Alexis Mac Allister",pos:"MID",rating:87},
+      {name:"Lionel Messi",pos:"FWD",rating:91},
+      {name:"Julián Álvarez",pos:"FWD",rating:89},
+    ]},
+  { name:"Portugal", flag:"🇵🇹", conf:"UEFA", tier:1, strength:86,
+    players:[
+      {name:"Diogo Costa",pos:"GK",rating:85},
+      {name:"João Cancelo",pos:"DEF",rating:86},
+      {name:"Rúben Dias",pos:"DEF",rating:89},
+      {name:"Bruno Fernandes",pos:"MID",rating:88},
+      {name:"Bernardo Silva",pos:"MID",rating:90},
+      {name:"Vitinha",pos:"MID",rating:85},
+      {name:"Rafael Leão",pos:"FWD",rating:87},
+      {name:"Gonçalo Ramos",pos:"FWD",rating:86},
+    ]},
+  { name:"Netherlands", flag:"🇳🇱", conf:"UEFA", tier:2, strength:85,
+    players:[
+      {name:"Bart Verbruggen",pos:"GK",rating:82},
+      {name:"Denzel Dumfries",pos:"DEF",rating:83},
+      {name:"Virgil van Dijk",pos:"DEF",rating:89},
+      {name:"Frenkie de Jong",pos:"MID",rating:88},
+      {name:"Tijjani Reijnders",pos:"MID",rating:84},
+      {name:"Cody Gakpo",pos:"FWD",rating:86},
+      {name:"Memphis Depay",pos:"FWD",rating:83},
+      {name:"Xavi Simons",pos:"FWD",rating:85},
+    ]},
+  { name:"Italy", flag:"🇮🇹", conf:"UEFA", tier:2, strength:83,
+    players:[
+      {name:"Gianluigi Donnarumma",pos:"GK",rating:90},
+      {name:"Giovanni Di Lorenzo",pos:"DEF",rating:83},
+      {name:"Alessandro Bastoni",pos:"DEF",rating:87},
+      {name:"Nicolò Barella",pos:"MID",rating:88},
+      {name:"Sandro Tonali",pos:"MID",rating:86},
+      {name:"Matteo Politano",pos:"FWD",rating:82},
+      {name:"Federico Chiesa",pos:"FWD",rating:85},
+      {name:"Lorenzo Pellegrini",pos:"MID",rating:84},
+    ]},
+  { name:"Belgium", flag:"🇧🇪", conf:"UEFA", tier:2, strength:82,
+    players:[
+      {name:"Koen Casteels",pos:"GK",rating:83},
+      {name:"Alexander Trossard",pos:"MID",rating:84},
+      {name:"Wout Faes",pos:"DEF",rating:81},
+      {name:"Kevin De Bruyne",pos:"MID",rating:91},
+      {name:"Youri Tielemans",pos:"MID",rating:83},
+      {name:"Dodi Lukebakio",pos:"FWD",rating:82},
+      {name:"Romelu Lukaku",pos:"FWD",rating:84},
+      {name:"Lois Openda",pos:"FWD",rating:84},
+    ]},
+  { name:"Uruguay", flag:"🇺🇾", conf:"CONMEBOL", tier:2, strength:81,
+    players:[
+      {name:"Sergio Rochet",pos:"GK",rating:81},
+      {name:"José María Giménez",pos:"DEF",rating:85},
+      {name:"Ronald Araújo",pos:"DEF",rating:86},
+      {name:"Federico Valverde",pos:"MID",rating:89},
+      {name:"Matías Vecino",pos:"MID",rating:81},
+      {name:"Darwin Núñez",pos:"FWD",rating:87},
+      {name:"Luis Suárez",pos:"FWD",rating:81},
+      {name:"Facundo Pellistri",pos:"FWD",rating:80},
+    ]},
+  { name:"Morocco", flag:"🇲🇦", conf:"CAF", tier:2, strength:82,
+    players:[
+      {name:"Yassine Bounou",pos:"GK",rating:86},
+      {name:"Achraf Hakimi",pos:"DEF",rating:88},
+      {name:"Nayef Aguerd",pos:"DEF",rating:82},
+      {name:"Sofyan Amrabat",pos:"MID",rating:84},
+      {name:"Azzedine Ounahi",pos:"MID",rating:82},
+      {name:"Hakim Ziyech",pos:"FWD",rating:84},
+      {name:"Youssef En-Nesyri",pos:"FWD",rating:83},
+      {name:"Sofiane Boufal",pos:"FWD",rating:81},
+    ]},
+  { name:"Croatia", flag:"🇭🇷", conf:"UEFA", tier:2, strength:81,
+    players:[
+      {name:"Dominik Livaković",pos:"GK",rating:85},
+      {name:"Joško Gvardiol",pos:"DEF",rating:87},
+      {name:"Šime Vrsaljko",pos:"DEF",rating:79},
+      {name:"Luka Modrić",pos:"MID",rating:88},
+      {name:"Mateo Kovačić",pos:"MID",rating:86},
+      {name:"Ivan Perišić",pos:"FWD",rating:83},
+      {name:"Andrej Kramarić",pos:"FWD",rating:83},
+      {name:"Marko Livaja",pos:"FWD",rating:80},
+    ]},
+  { name:"Colombia", flag:"🇨🇴", conf:"CONMEBOL", tier:2, strength:80,
+    players:[
+      {name:"David Ospina",pos:"GK",rating:82},
+      {name:"Santiago Arias",pos:"DEF",rating:79},
+      {name:"Dávinson Sánchez",pos:"DEF",rating:82},
+      {name:"James Rodríguez",pos:"MID",rating:85},
+      {name:"Matheus Uribe",pos:"MID",rating:79},
+      {name:"Juan Cuadrado",pos:"FWD",rating:80},
+      {name:"Luis Díaz",pos:"FWD",rating:87},
+      {name:"Jhon Duran",pos:"FWD",rating:82},
+    ]},
+  { name:"USA", flag:"🇺🇸", conf:"CONCACAF", tier:2, strength:79,
+    players:[
+      {name:"Matt Turner",pos:"GK",rating:82},
+      {name:"Sergino Dest",pos:"DEF",rating:81},
+      {name:"Miles Robinson",pos:"DEF",rating:81},
+      {name:"Yunus Musah",pos:"MID",rating:83},
+      {name:"Tyler Adams",pos:"MID",rating:83},
+      {name:"Christian Pulisic",pos:"FWD",rating:87},
+      {name:"Ricardo Pepi",pos:"FWD",rating:82},
+      {name:"Giovanni Reyna",pos:"FWD",rating:82},
+    ]},
+  { name:"Senegal", flag:"🇸🇳", conf:"CAF", tier:2, strength:79,
+    players:[
+      {name:"Édouard Mendy",pos:"GK",rating:84},
+      {name:"Youssouf Sabaly",pos:"DEF",rating:79},
+      {name:"Kalidou Koulibaly",pos:"DEF",rating:84},
+      {name:"Idrissa Gueye",pos:"MID",rating:81},
+      {name:"Cheikhou Kouyaté",pos:"MID",rating:79},
+      {name:"Sadio Mané",pos:"FWD",rating:87},
+      {name:"Ismaïla Sarr",pos:"FWD",rating:83},
+      {name:"Boulaye Dia",pos:"FWD",rating:82},
+    ]},
+  { name:"Japan", flag:"🇯🇵", conf:"AFC", tier:2, strength:78,
+    players:[
+      {name:"Shuichi Gonda",pos:"GK",rating:80},
+      {name:"Hiroki Sakai",pos:"DEF",rating:78},
+      {name:"Maya Yoshida",pos:"DEF",rating:80},
+      {name:"Wataru Endo",pos:"MID",rating:83},
+      {name:"Ritsu Doan",pos:"MID",rating:83},
+      {name:"Takefusa Kubo",pos:"FWD",rating:84},
+      {name:"Kaoru Mitoma",pos:"FWD",rating:84},
+      {name:"Daichi Kamada",pos:"MID",rating:83},
+    ]},
+  { name:"Mexico", flag:"🇲🇽", conf:"CONCACAF", tier:3, strength:78,
+    players:[
+      {name:"Guillermo Ochoa",pos:"GK",rating:82},
+      {name:"Jorge Sánchez",pos:"DEF",rating:77},
+      {name:"Johan Vásquez",pos:"DEF",rating:79},
+      {name:"Edson Álvarez",pos:"MID",rating:84},
+      {name:"Héctor Herrera",pos:"MID",rating:79},
+      {name:"Hirving Lozano",pos:"FWD",rating:83},
+      {name:"Raúl Jiménez",pos:"FWD",rating:82},
+      {name:"Alexis Vega",pos:"FWD",rating:79},
+    ]},
+  { name:"Canada", flag:"🇨🇦", conf:"CONCACAF", tier:3, strength:77,
+    players:[
+      {name:"Maxime Crépeau",pos:"GK",rating:80},
+      {name:"Alistair Johnston",pos:"DEF",rating:79},
+      {name:"Kamal Miller",pos:"DEF",rating:79},
+      {name:"Jonathan Osorio",pos:"MID",rating:80},
+      {name:"Tajon Buchanan",pos:"MID",rating:81},
+      {name:"Alphonso Davies",pos:"FWD",rating:87},
+      {name:"Jonathan David",pos:"FWD",rating:85},
+      {name:"Cyle Larin",pos:"FWD",rating:80},
+    ]},
+  { name:"South Korea", flag:"🇰🇷", conf:"AFC", tier:3, strength:77,
+    players:[
+      {name:"Kim Seung-gyu",pos:"GK",rating:79},
+      {name:"Kim Moon-hwan",pos:"DEF",rating:76},
+      {name:"Kim Min-jae",pos:"DEF",rating:87},
+      {name:"Son Heung-min",pos:"FWD",rating:89},
+      {name:"Lee Jae-sung",pos:"MID",rating:79},
+      {name:"Hwang Hee-chan",pos:"FWD",rating:82},
+      {name:"Hwang In-beom",pos:"MID",rating:80},
+      {name:"Lee Kang-in",pos:"MID",rating:83},
+    ]},
+];
+
+const GROUPS = [
+  {letter:"A",teams:["🇺🇸 USA","🇧🇷 Brazil","🇬🇭 Ghana","🇵🇦 Panama"]},
+  {letter:"B",teams:["🇲🇽 Mexico","🇦🇷 Argentina","🇪🇨 Ecuador","🇷🇴 Romania"]},
+  {letter:"C",teams:["🇨🇦 Canada","🇫🇷 France","🇨🇮 Côte d'Ivoire","🇲🇦 Morocco"]},
+  {letter:"D",teams:["🇪🇸 Spain","🇯🇵 Japan","🇨🇷 Costa Rica","🇰🇪 Kenya"]},
+  {letter:"E",teams:["🇩🇪 Germany","🇸🇦 Saudi Arabia","🇧🇪 Belgium","🇦🇺 Australia"]},
+  {letter:"F",teams:["🇵🇹 Portugal","🇰🇷 South Korea","🇳🇿 New Zealand","🇸🇳 Senegal"]},
+  {letter:"G",teams:["🏴󠁧󠁢󠁥󠁮󠁧󠁿 England","🇳🇱 Netherlands","🇨🇴 Colombia","🇨🇲 Cameroon"]},
+  {letter:"H",teams:["🇺🇾 Uruguay","🇭🇷 Croatia","🇨🇱 Chile","🇦🇱 Albania"]},
+  {letter:"I",teams:["🇦🇹 Austria","🇸🇪 Sweden","🇹🇷 Turkey","🇻🇪 Venezuela"]},
+  {letter:"J",teams:["🇨🇭 Switzerland","🇷🇸 Serbia","🇿🇦 South Africa","🇵🇾 Paraguay"]},
+  {letter:"K",teams:["🇳🇬 Nigeria","🇨🇱 Chile","🇸🇳 Senegal","🇧🇭 Bahrain"]},
+  {letter:"L",teams:["🇮🇷 Iran","🇯🇴 Jordan","🇨🇩 DR Congo","🇬🇷 Greece"]},
+];
+
+// ── SIMULATION ────────────────────────────────────────────────────────────────
+let simResults = null;
+
+function sigmoid(x) { return 1 / (1 + Math.exp(-x)); }
+function matchWinProb(a, b) { return sigmoid(((a - b) / 10) * 0.8); }
+function simulateMatch(a, b) { return Math.random() < matchWinProb(a.strength, b.strength) ? a : b; }
+
+function simulateTournament(teams) {
+  let pool = [...teams];
+  const rounds = [];
+  while (pool.length > 1) {
+    const matches = [], next = [];
+    for (let i = 0; i < pool.length; i += 2) {
+      if (i + 1 < pool.length) {
+        const w = simulateMatch(pool[i], pool[i+1]);
+        const l = w === pool[i] ? pool[i+1] : pool[i];
+        matches.push({a:pool[i], b:pool[i+1], winner:w, loser:l});
+        next.push(w);
+      } else {
+        matches.push({a:pool[i], b:null, winner:pool[i], loser:null});
+        next.push(pool[i]);
+      }
+    }
+    rounds.push(matches);
+    pool = next;
+  }
+  return {champion:pool[0], rounds};
+}
+
+function runSimulation() {
+  const btn = document.getElementById('runBtn');
+  btn.disabled = true;
+  btn.textContent = 'Simulating…';
+  document.getElementById('loader').classList.add('show');
+
+  const SIMS = 10000;
+  const wins = {}, finals = {}, semis = {};
+  TEAMS.forEach(t => { wins[t.name]=0; finals[t.name]=0; semis[t.name]=0; });
+  let lastBracket = null, i = 0;
+
+  function batch() {
+    const end = Math.min(i + 250, SIMS);
+    for (; i < end; i++) {
+      const pool = [...TEAMS].sort(() => Math.random() - .5);
+      const n = Math.pow(2, Math.ceil(Math.log2(pool.length)));
+      while (pool.length < n) pool.push(pool[Math.floor(Math.random() * TEAMS.length)]);
+      const result = simulateTournament(pool.slice(0, 16));
+      wins[result.champion.name]++;
+      const fr = result.rounds[result.rounds.length-1];
+      if (fr) fr.forEach(m => {
+        if (m.a) semis[m.a.name]++;
+        if (m.b) semis[m.b.name]++;
+        if (m.winner) finals[m.winner.name]++;
+      });
+      if (i === SIMS-1) lastBracket = result;
+    }
+    const pct = (i/SIMS)*100;
+    document.getElementById('loaderFill').style.width = pct+'%';
+    document.getElementById('loaderStatus').textContent = `${i.toLocaleString()} / ${SIMS.toLocaleString()} simulations complete`;
+    if (i < SIMS) { requestAnimationFrame(batch); return; }
+    simResults = {wins, finals, semis, lastBracket, total:SIMS};
+    document.getElementById('loader').classList.remove('show');
+    btn.disabled = false;
+    btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M5 3l8 5-8 5V3z" fill="currentColor"/></svg> Re-Run Prediction';
+    renderResults();
+  }
+  requestAnimationFrame(batch);
+}
+
+function renderResults() {
+  const {wins, finals, semis, lastBracket, total} = simResults;
+  const sorted = TEAMS.map(t => ({
+    ...t,
+    winPct: (wins[t.name]||0)/total*100,
+    finalPct: (finals[t.name]||0)/total*100,
+    semiPct: (semis[t.name]||0)/total*100,
+  })).sort((a,b) => b.winPct - a.winPct);
+
+  const champ = sorted[0], runner = sorted[1];
+
+  // Champion card
+  const card = document.getElementById('champCard');
+  card.classList.add('show');
+  document.getElementById('champFlag').textContent = champ.flag;
+  document.getElementById('champName').textContent = champ.name;
+  document.getElementById('champProb').innerHTML = `✓ ${champ.winPct.toFixed(1)}% probability of winning`;
+  document.getElementById('champPlayers').innerHTML = champ.players.slice(0,5).map(p =>
+    `<div class="champ-player"><span class="champ-pos">${p.pos}</span> ${p.name}</div>`
+  ).join('');
+
+  // Final matchup
+  const fr = document.getElementById('finalRow');
+  fr.classList.add('show');
+  document.getElementById('runnerFlag').textContent = runner.flag;
+  document.getElementById('runnerName').textContent = runner.name;
+  document.getElementById('winnerFlag2').textContent = champ.flag;
+  document.getElementById('winnerName2').textContent = champ.name;
+
+  // Note
+  document.getElementById('simNote').textContent =
+    `Based on ${total.toLocaleString()} simulations · 2025/26 season ratings`;
+
+  // Rankings
+  const maxPct = sorted[0].winPct;
+  document.getElementById('rankList').innerHTML = sorted.map((t, i) => {
+    const fillClass = i===0 ? 'top1' : i===1 ? 'top2' : i===2 ? 'top3' : '';
+    const rankClass = i<3 ? 'top' : '';
+    const odds = t.winPct > 0 ? `~${Math.round(100/t.winPct)}/1` : '–';
+    return `
+      <div class="rank-row">
+        <div class="rank-num ${rankClass}">${i===0?'🥇':i===1?'🥈':i===2?'🥉':'#'+(i+1)}</div>
+        <div class="rank-left">
+          <span class="rank-flag">${t.flag}</span>
+          <div style="flex:1;min-width:0;">
+            <div class="rank-name">${t.name}</div>
+            <div class="rank-bar-track"><div class="rank-bar-fill ${fillClass}" style="width:${(t.winPct/maxPct)*100}%"></div></div>
+          </div>
+        </div>
+        <div class="rank-pct">${t.winPct.toFixed(1)}%</div>
+        <div class="rank-odds">${odds}</div>
+      </div>`;
+  }).join('');
+
+  renderBracket(lastBracket);
+  renderDynamicStats(sorted);
+}
+
+function renderBracket(data) {
+  if (!data) return;
+  const wrap = document.getElementById('bracketWrap');
+  const roundNames = ['Round of 16','Quarter-finals','Semi-finals','Final'];
+  wrap.innerHTML = `<div class="bracket-scroll"><div class="bracket-wrap" id="bInner"></div></div>`;
+  const inner = document.getElementById('bInner');
+
+  data.rounds.forEach((round, ri) => {
+    const col = document.createElement('div');
+    col.className = 'b-round';
+    const title = document.createElement('div');
+    title.className = 'b-round-title';
+    title.textContent = roundNames[ri] || `Round ${ri+1}`;
+    col.appendChild(title);
+    const matches = document.createElement('div');
+    matches.className = 'b-matches';
+    round.forEach(m => {
+      const winA = m.winner.name === m.a.name;
+      matches.innerHTML += `
+        <div class="b-match">
+          <div class="b-team ${winA?'win':'lose'}"><span class="b-flag">${m.a.flag}</span>${m.a.name}</div>
+          <div class="b-team ${m.b?(winA?'lose':'win'):''}">
+            ${m.b ? `<span class="b-flag">${m.b.flag}</span>${m.b.name}` : '<span style="color:var(--text-4)">BYE</span>'}
+          </div>
+        </div>`;
+    });
+    col.appendChild(matches);
+    inner.appendChild(col);
+    if (ri < data.rounds.length-1) {
+      const arrow = document.createElement('div');
+      arrow.className = 'b-arrow'; arrow.textContent = '›';
+      inner.appendChild(arrow);
+    }
+  });
+
+  // Champion
+  const arrow = document.createElement('div');
+  arrow.className = 'b-arrow'; arrow.textContent = '›';
+  inner.appendChild(arrow);
+  const champCol = document.createElement('div');
+  champCol.className = 'b-round';
+  champCol.innerHTML = `
+    <div class="b-round-title">Champion</div>
+    <div class="b-matches">
+      <div class="b-match">
+        <div class="b-team win" style="justify-content:center;padding:14px;gap:8px;">
+          🏆 <span class="b-flag">${data.champion.flag}</span> ${data.champion.name}
+        </div>
+      </div>
+    </div>`;
+  inner.appendChild(champCol);
+}
+
+function renderDynamicStats(sorted) {
+  const topPlayer = TEAMS.flatMap(t => t.players).reduce((b,p) => p.rating > b.rating ? p : b);
+  const topTeamPlayer = TEAMS.flatMap(t => t.players.map(p => ({...p, team: t.name, flag: t.flag})))
+    .sort((a,b) => b.rating - a.rating).slice(0,10);
+
+  document.getElementById('topPlayersList').innerHTML = topTeamPlayer.map((p,i) => `
+    <div class="rank-row">
+      <div class="rank-num ${i<3?'top':''}">${i===0?'🥇':i===1?'🥈':i===2?'🥉':'#'+(i+1)}</div>
+      <div class="rank-left">
+        <span class="rank-flag">${p.flag}</span>
+        <div>
+          <div class="rank-name">${p.name}</div>
+          <div style="font-size:11px;color:var(--text-4);margin-top:2px;">${p.team} · ${p.pos}</div>
+        </div>
+      </div>
+      <div class="rank-pct" style="font-size:20px;">${p.rating}</div>
+      <div class="rank-odds">Rating</div>
+    </div>`).join('');
+}
+
+// ── TEAMS RENDER ──────────────────────────────────────────────────────────────
+let currentFilter = 'all';
+
+function filterTeams(conf, btn) {
+  currentFilter = conf;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderTeams();
+}
+
+function renderTeams() {
+  const grid = document.getElementById('teamsGrid');
+  const filtered = currentFilter === 'all'
+    ? TEAMS
+    : TEAMS.filter(t => {
+        if (currentFilter === 'CAF / AFC' || currentFilter === 'CAF') return t.conf === 'CAF' || t.conf === 'AFC';
+        return t.conf === currentFilter;
+      });
+
+  const tierLabel = {1:'Top Contender',2:'Strong',3:'Dark Horse'};
+
+  grid.innerHTML = filtered.map(t => {
+    const fillPct = ((t.strength - 70) / 30) * 100;
+    const fillColor = t.strength >= 90 ? '#D97706' : t.strength >= 85 ? '#2563EB' : '#047857';
+
+    const playersHtml = t.players.map(p => {
+      const ratingClass = p.rating >= 93 ? 'world' : p.rating >= 88 ? 'elite' : '';
+      return `
+        <div class="pl-row">
+          <div class="pl-left">
+            <span class="pos-badge pos-${p.pos}">${p.pos}</span>
+            <span class="pl-name">${p.name}</span>
+          </div>
+          <div class="pl-rating ${ratingClass}">${p.rating}</div>
+        </div>`;
+    }).join('');
+
+    return `
+      <div class="team-card">
+        <div class="tc-head">
+          <div class="tc-flag">${t.flag}</div>
+          <div class="tc-meta">
+            <div class="tc-name">${t.name}</div>
+            <div class="tc-conf">${t.conf}</div>
+            <span class="tc-tier tier-${t.tier}">${tierLabel[t.tier]}</span>
+          </div>
+        </div>
+        <div class="tc-strength">
+          <div class="tc-str-label"><span>Overall Strength</span><span class="tc-str-val">${t.strength}</span></div>
+          <div class="tc-str-track"><div class="tc-str-fill" style="width:${fillPct}%;background:${fillColor}"></div></div>
+        </div>
+        <div class="tc-players">
+          <div class="tc-pl-head">Key Players</div>
+          ${playersHtml}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// ── GROUPS RENDER ─────────────────────────────────────────────────────────────
+function renderGroups() {
+  document.getElementById('groupsGrid').innerHTML = GROUPS.map(g => `
+    <div class="group-card">
+      <div class="group-head">
+        <span class="group-letter">Group ${g.letter}</span>
+        <span class="group-count">4 teams</span>
+      </div>
+      <div class="group-teams">
+        ${g.teams.map((team,i) => {
+          const parts = team.split(' ');
+          const flag = parts[0], name = parts.slice(1).join(' ');
+          return `
+            <div class="group-team">
+              <span class="g-num">${i+1}</span>
+              <span class="g-flag">${flag}</span>
+              <span>${name}</span>
+            </div>`;
+        }).join('')}
+      </div>
+    </div>`).join('');
+}
+
+// ── NAVIGATION ────────────────────────────────────────────────────────────────
+function showPage(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+renderTeams();
+renderGroups();
+renderDynamicStats(TEAMS.map(t=>({...t,winPct:0})));
+</script>
+</body>
+</html>
